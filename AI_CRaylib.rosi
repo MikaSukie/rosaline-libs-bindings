@@ -1,0 +1,898 @@
+// raylib.lc
+// Complete Raylib bindings for Lucile (Will be later auto generated instead or rewritten)
+// Compile & link with: -lraylib -lm -ldl -lpthread (Linux)
+//                      -lraylib -framework... (macOS)
+//                      raylib.lib (Windows)
+// ============================================================
+// Structs
+// ============================================================
+
+struct Vector2 {
+    f32 x;
+    f32 y;
+}
+
+struct Vector3 {
+    f32 x;
+    f32 y;
+    f32 z;
+}
+
+struct Vector4 {
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 w;
+}
+
+struct Rectangle {
+    f32 x;
+    f32 y;
+    f32 width;
+    f32 height;
+}
+
+packed struct Color {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+}
+
+struct Texture {
+    u32 id;
+    i32 width;
+    i32 height;
+    i32 mipmaps;
+    i32 format;
+}
+
+struct RenderTexture {
+    u32     id;
+    Texture texture;
+    Texture depth;
+}
+
+struct Image {
+    void* data;
+    i32   width;
+    i32   height;
+    i32   mipmaps;
+    i32   format;
+}
+
+struct Font {
+    i32     baseSize;
+    i32     glyphCount;
+    i32     glyphPadding;
+    Texture texture;
+    void*   recs;
+    void*   glyphs;
+}
+
+struct Camera2D {
+    Vector2 offset;
+    Vector2 target;
+    f32     rotation;
+    f32     zoom;
+}
+
+struct Camera3D {
+    Vector3 position;
+    Vector3 target;
+    Vector3 up;
+    f32     fovy;
+    i32     projection;
+}
+
+struct Ray {
+    Vector3 position;
+    Vector3 direction;
+}
+
+struct BoundingBox {
+    Vector3 min;
+    Vector3 max;
+}
+
+struct NPatchInfo {
+    Rectangle source;
+    i32       left;
+    i32       top;
+    i32       right;
+    i32       bottom;
+    i32       layout;
+}
+
+struct AudioStream {
+    void* buffer;
+    void* processor;
+    u32   sampleRate;
+    u32   sampleSize;
+    u32   channels;
+}
+
+struct Wave {
+    u32   frameCount;
+    u32   sampleRate;
+    u32   sampleSize;
+    u32   channels;
+    void* data;
+}
+
+struct Sound {
+    AudioStream stream;
+    u32         frameCount;
+}
+
+struct Music {
+    AudioStream stream;
+    u32         frameCount;
+    bool        looping;
+    i32         ctxType;
+    void*       ctxData;
+}
+
+// ============================================================
+// rcore, Window management
+// ============================================================
+
+extern InitWindow(i32 width, i32 height, str title) void;
+extern CloseWindow() void;
+extern WindowShouldClose() bool;
+extern IsWindowReady() bool;
+extern IsWindowFullscreen() bool;
+extern IsWindowHidden() bool;
+extern IsWindowMinimized() bool;
+extern IsWindowMaximized() bool;
+extern IsWindowFocused() bool;
+extern IsWindowResized() bool;
+extern IsWindowState(u32 flag) bool;
+extern SetWindowState(u32 flags) void;
+extern ClearWindowState(u32 flags) void;
+extern ToggleFullscreen() void;
+extern ToggleBorderlessWindowed() void;
+extern MaximizeWindow() void;
+extern MinimizeWindow() void;
+extern RestoreWindow() void;
+extern SetWindowTitle(str title) void;
+extern SetWindowPosition(i32 x, i32 y) void;
+extern SetWindowMonitor(i32 monitor) void;
+extern SetWindowMinSize(i32 width, i32 height) void;
+extern SetWindowMaxSize(i32 width, i32 height) void;
+extern SetWindowSize(i32 width, i32 height) void;
+extern SetWindowOpacity(f32 opacity) void;
+extern SetWindowFocused() void;
+extern GetScreenWidth() i32;
+extern GetScreenHeight() i32;
+extern GetRenderWidth() i32;
+extern GetRenderHeight() i32;
+extern GetMonitorCount() i32;
+extern GetCurrentMonitor() i32;
+extern GetMonitorPosition(i32 monitor) Vector2;
+extern GetMonitorWidth(i32 monitor) i32;
+extern GetMonitorHeight(i32 monitor) i32;
+extern GetMonitorRefreshRate(i32 monitor) i32;
+extern GetWindowPosition() Vector2;
+extern GetWindowScaleDPI() Vector2;
+extern GetMonitorName(i32 monitor) str;
+extern SetClipboardText(str text) void;
+extern GetClipboardText() str;
+extern EnableEventWaiting() void;
+extern DisableEventWaiting() void;
+
+// ============================================================
+// rcore, Cursor
+// ============================================================
+
+extern ShowCursor() void;
+extern HideCursor() void;
+extern IsCursorHidden() bool;
+extern EnableCursor() void;
+extern DisableCursor() void;
+extern IsCursorOnScreen() bool;
+
+// ============================================================
+// rcore, Drawing
+// ============================================================
+
+extern ClearBackground(Color color) void;
+extern BeginDrawing() void;
+extern EndDrawing() void;
+extern BeginMode2D(Camera2D camera) void;
+extern EndMode2D() void;
+extern BeginMode3D(Camera3D camera) void;
+extern EndMode3D() void;
+extern BeginTextureMode(RenderTexture target) void;
+extern EndTextureMode() void;
+extern BeginScissorMode(i32 x, i32 y, i32 width, i32 height) void;
+extern EndScissorMode() void;
+
+// ============================================================
+// rcore, Timing
+// ============================================================
+
+extern SetTargetFPS(i32 fps) void;
+extern GetFrameTime() f32;
+extern GetTime() f64;
+extern GetFPS() i32;
+
+// ============================================================
+// rcore, Misc / utils
+// ============================================================
+
+extern TakeScreenshot(str fileName) void;
+extern SetConfigFlags(u32 flags) void;
+extern OpenURL(str url) void;
+extern TraceLog(i32 logLevel, str text) void;
+extern SetTraceLogLevel(i32 logLevel) void;
+
+// ============================================================
+// rcore, Random
+// ============================================================
+
+extern SetRandomSeed(u32 seed) void;
+extern GetRandomValue(i32 min, i32 max) i32;
+
+// ============================================================
+// rcore, File system helpers
+// ============================================================
+
+extern FileExists(str fileName) bool;
+extern DirectoryExists(str dirPath) bool;
+extern IsFileExtension(str fileName, str ext) bool;
+extern GetFileLength(str fileName) i32;
+extern GetFileExtension(str fileName) str;
+extern GetFileName(str filePath) str;
+extern GetFileNameWithoutExt(str filePath) str;
+extern GetDirectoryPath(str filePath) str;
+extern GetWorkingDirectory() str;
+extern GetApplicationDirectory() str;
+extern ChangeDirectory(str dir) bool;
+extern IsPathFile(str path) bool;
+
+// ============================================================
+// rcore, Camera
+// ============================================================
+
+extern UpdateCamera(Camera3D* camera, i32 mode) void;
+extern UpdateCameraPro(Camera3D* camera, Vector3 movement, Vector3 rotation, f32 zoom) void;
+
+// ============================================================
+// rcore, Input: Keyboard
+// ============================================================
+
+extern IsKeyPressed(i32 key) bool;
+extern IsKeyPressedRepeat(i32 key) bool;
+extern IsKeyDown(i32 key) bool;
+extern IsKeyReleased(i32 key) bool;
+extern IsKeyUp(i32 key) bool;
+extern GetKeyPressed() i32;
+extern GetCharPressed() i32;
+extern SetExitKey(i32 key) void;
+
+// ============================================================
+// rcore, Input: Mouse
+// ============================================================
+
+extern IsMouseButtonPressed(i32 button) bool;
+extern IsMouseButtonDown(i32 button) bool;
+extern IsMouseButtonReleased(i32 button) bool;
+extern IsMouseButtonUp(i32 button) bool;
+extern GetMouseX() i32;
+extern GetMouseY() i32;
+extern GetMousePosition() Vector2;
+extern GetMouseDelta() Vector2;
+extern SetMousePosition(i32 x, i32 y) void;
+extern SetMouseOffset(i32 offsetX, i32 offsetY) void;
+extern SetMouseScale(f32 scaleX, f32 scaleY) void;
+extern GetMouseWheelMove() f32;
+extern GetMouseWheelMoveV() Vector2;
+extern SetMouseCursor(i32 cursor) void;
+
+// ============================================================
+// rcore, Input: Touch
+// ============================================================
+
+extern GetTouchX() i32;
+extern GetTouchY() i32;
+extern GetTouchPosition(i32 index) Vector2;
+extern GetTouchPointId(i32 index) i32;
+extern GetTouchPointCount() i32;
+
+// ============================================================
+// rcore, Input: Gamepad
+// ============================================================
+
+extern IsGamepadAvailable(i32 gamepad) bool;
+extern GetGamepadName(i32 gamepad) str;
+extern IsGamepadButtonPressed(i32 gamepad, i32 button) bool;
+extern IsGamepadButtonDown(i32 gamepad, i32 button) bool;
+extern IsGamepadButtonReleased(i32 gamepad, i32 button) bool;
+extern IsGamepadButtonUp(i32 gamepad, i32 button) bool;
+extern GetGamepadButtonPressed() i32;
+extern GetGamepadAxisCount(i32 gamepad) i32;
+extern GetGamepadAxisMovement(i32 gamepad, i32 axis) f32;
+
+// ============================================================
+// rshapes, Basic 2D shapes
+// ============================================================
+
+extern DrawPixel(i32 posX, i32 posY, Color color) void;
+extern DrawPixelV(Vector2 position, Color color) void;
+extern DrawLine(i32 startPosX, i32 startPosY, i32 endPosX, i32 endPosY, Color color) void;
+extern DrawLineV(Vector2 startPos, Vector2 endPos, Color color) void;
+extern DrawLineEx(Vector2 startPos, Vector2 endPos, f32 thick, Color color) void;
+extern DrawLineBezier(Vector2 startPos, Vector2 endPos, f32 thick, Color color) void;
+extern DrawCircle(i32 centerX, i32 centerY, f32 radius, Color color) void;
+extern DrawCircleSector(Vector2 center, f32 radius, f32 startAngle, f32 endAngle, i32 segments, Color color) void;
+extern DrawCircleSectorLines(Vector2 center, f32 radius, f32 startAngle, f32 endAngle, i32 segments, Color color) void;
+extern DrawCircleGradient(i32 centerX, i32 centerY, f32 radius, Color inner, Color outer) void;
+extern DrawCircleV(Vector2 center, f32 radius, Color color) void;
+extern DrawCircleLines(i32 centerX, i32 centerY, f32 radius, Color color) void;
+extern DrawCircleLinesV(Vector2 center, f32 radius, Color color) void;
+extern DrawEllipse(i32 centerX, i32 centerY, f32 radiusH, f32 radiusV, Color color) void;
+extern DrawEllipseLines(i32 centerX, i32 centerY, f32 radiusH, f32 radiusV, Color color) void;
+extern DrawRing(Vector2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, Color color) void;
+extern DrawRingLines(Vector2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, Color color) void;
+extern DrawRectangle(i32 posX, i32 posY, i32 width, i32 height, Color color) void;
+extern DrawRectangleV(Vector2 position, Vector2 size, Color color) void;
+extern DrawRectangleRec(Rectangle rec, Color color) void;
+extern DrawRectanglePro(Rectangle rec, Vector2 origin, f32 rotation, Color color) void;
+extern DrawRectangleGradientV(i32 posX, i32 posY, i32 width, i32 height, Color top, Color bottom) void;
+extern DrawRectangleGradientH(i32 posX, i32 posY, i32 width, i32 height, Color left, Color right) void;
+extern DrawRectangleGradientEx(Rectangle rec, Color topLeft, Color bottomLeft, Color bottomRight, Color topRight) void;
+extern DrawRectangleLines(i32 posX, i32 posY, i32 width, i32 height, Color color) void;
+extern DrawRectangleLinesEx(Rectangle rec, f32 lineThick, Color color) void;
+extern DrawRectangleRounded(Rectangle rec, f32 roundness, i32 segments, Color color) void;
+extern DrawRectangleRoundedLines(Rectangle rec, f32 roundness, i32 segments, Color color) void;
+extern DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, f32 lineThick, Color color) void;
+extern DrawTriangle(Vector2 v1, Vector2 v2, Vector2 v3, Color color) void;
+extern DrawTriangleLines(Vector2 v1, Vector2 v2, Vector2 v3, Color color) void;
+extern DrawPoly(Vector2 center, i32 sides, f32 radius, f32 rotation, Color color) void;
+extern DrawPolyLines(Vector2 center, i32 sides, f32 radius, f32 rotation, Color color) void;
+extern DrawPolyLinesEx(Vector2 center, i32 sides, f32 radius, f32 rotation, f32 lineThick, Color color) void;
+
+extern CheckCollisionRecs(Rectangle rec1, Rectangle rec2) bool;
+extern CheckCollisionCircles(Vector2 center1, f32 radius1, Vector2 center2, f32 radius2) bool;
+extern CheckCollisionCircleRec(Vector2 center, f32 radius, Rectangle rec) bool;
+extern CheckCollisionPointRec(Vector2 point, Rectangle rec) bool;
+extern CheckCollisionPointCircle(Vector2 point, Vector2 center, f32 radius) bool;
+extern CheckCollisionPointTriangle(Vector2 point, Vector2 p1, Vector2 p2, Vector2 p3) bool;
+extern GetCollisionRec(Rectangle rec1, Rectangle rec2) Rectangle;
+
+// ============================================================
+// rtextures, Image (CPU-side)
+// ============================================================
+
+extern LoadImage(str fileName) Image;
+extern LoadImageFromMemory(str fileType, void* fileData, i32 dataSize) Image;
+extern IsImageValid(Image image) bool;
+extern UnloadImage(Image image) void;
+extern ExportImage(Image image, str fileName) bool;
+extern GenImageColor(i32 width, i32 height, Color color) Image;
+extern GenImageGradientLinear(i32 width, i32 height, i32 direction, Color start, Color end) Image;
+extern GenImageGradientRadial(i32 width, i32 height, f32 density, Color inner, Color outer) Image;
+extern GenImageChecked(i32 width, i32 height, i32 checksX, i32 checksY, Color col1, Color col2) Image;
+extern GenImageWhiteNoise(i32 width, i32 height, f32 factor) Image;
+extern ImageCopy(Image image) Image;
+extern ImageFromImage(Image image, Rectangle rec) Image;
+extern ImageFormat(Image* image, i32 newFormat) void;
+extern ImageToPOT(Image* image, Color fill) void;
+extern ImageCrop(Image* image, Rectangle crop) void;
+extern ImageAlphaCrop(Image* image, f32 threshold) void;
+extern ImageAlphaClear(Image* image, Color color, f32 threshold) void;
+extern ImageAlphaMask(Image* image, Image alphaMask) void;
+extern ImageAlphaPremultiply(Image* image) void;
+extern ImageBlurGaussian(Image* image, i32 blurSize) void;
+extern ImageResize(Image* image, i32 newWidth, i32 newHeight) void;
+extern ImageResizeNN(Image* image, i32 newWidth, i32 newHeight) void;
+extern ImageResizeCanvas(Image* image, i32 newWidth, i32 newHeight, i32 offsetX, i32 offsetY, Color fill) void;
+extern ImageMipmaps(Image* image) void;
+extern ImageFlipVertical(Image* image) void;
+extern ImageFlipHorizontal(Image* image) void;
+extern ImageRotate(Image* image, i32 degrees) void;
+extern ImageRotateCW(Image* image) void;
+extern ImageRotateCCW(Image* image) void;
+extern ImageColorTint(Image* image, Color color) void;
+extern ImageColorInvert(Image* image) void;
+extern ImageColorGrayscale(Image* image) void;
+extern ImageColorContrast(Image* image, f32 contrast) void;
+extern ImageColorBrightness(Image* image, i32 brightness) void;
+extern ImageColorReplace(Image* image, Color color, Color replace) void;
+extern GetImageAlphaBorder(Image image, f32 threshold) Rectangle;
+extern GetImageColor(Image image, i32 x, i32 y) Color;
+extern ImageClearBackground(Image* dst, Color color) void;
+extern ImageDrawPixel(Image* dst, i32 posX, i32 posY, Color color) void;
+extern ImageDrawLine(Image* dst, i32 startPosX, i32 startPosY, i32 endPosX, i32 endPosY, Color color) void;
+extern ImageDrawCircle(Image* dst, i32 centerX, i32 centerY, i32 radius, Color color) void;
+extern ImageDrawRectangle(Image* dst, i32 posX, i32 posY, i32 width, i32 height, Color color) void;
+extern ImageDrawRectangleRec(Image* dst, Rectangle rec, Color color) void;
+extern ImageDrawText(Image* dst, str text, i32 posX, i32 posY, i32 fontSize, Color color) void;
+extern ImageDraw(Image* dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint) void;
+
+// ============================================================
+// rtextures, Texture (GPU-side)
+// ============================================================
+
+extern LoadTexture(str fileName) Texture;
+extern LoadTextureFromImage(Image image) Texture;
+extern LoadRenderTexture(i32 width, i32 height) RenderTexture;
+extern IsTextureValid(Texture texture) bool;
+extern UnloadTexture(Texture texture) void;
+extern IsRenderTextureValid(RenderTexture target) bool;
+extern UnloadRenderTexture(RenderTexture target) void;
+extern UpdateTexture(Texture texture, void* pixels) void;
+extern GenTextureMipmaps(Texture* texture) void;
+extern SetTextureFilter(Texture texture, i32 filter) void;
+extern SetTextureWrap(Texture texture, i32 wrap) void;
+extern DrawTexture(Texture texture, i32 posX, i32 posY, Color tint) void;
+extern DrawTextureV(Texture texture, Vector2 position, Color tint) void;
+extern DrawTextureEx(Texture texture, Vector2 position, f32 rotation, f32 scale, Color tint) void;
+extern DrawTextureRec(Texture texture, Rectangle source, Vector2 position, Color tint) void;
+extern DrawTexturePro(Texture texture, Rectangle source, Rectangle dest, Vector2 origin, f32 rotation, Color tint) void;
+extern DrawTextureNPatch(Texture texture, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, f32 rotation, Color tint) void;
+
+extern Fade(Color color, f32 alpha) Color;
+extern ColorToInt(Color color) i32;
+extern ColorNormalize(Color color) Vector4;
+extern ColorFromNormalized(Vector4 normalized) Color;
+extern ColorToHSV(Color color) Vector3;
+extern ColorFromHSV(f32 hue, f32 saturation, f32 value) Color;
+extern ColorTint(Color color, Color tint) Color;
+extern ColorBrightness(Color color, f32 factor) Color;
+extern ColorContrast(Color color, f32 contrast) Color;
+extern ColorAlpha(Color color, f32 alpha) Color;
+extern ColorAlphaBlend(Color dst, Color src, Color tint) Color;
+extern ColorLerp(Color color1, Color color2, f32 factor) Color;
+extern GetColor(u32 hexValue) Color;
+
+// ============================================================
+// rtext, Font & Text
+// ============================================================
+
+extern GetFontDefault() Font;
+extern LoadFont(str fileName) Font;
+extern LoadFontEx(str fileName, i32 fontSize, void* codepoints, i32 codepointCount) Font;
+extern IsFontValid(Font font) bool;
+extern UnloadFont(Font font) void;
+extern DrawFPS(i32 posX, i32 posY) void;
+extern DrawText(str text, i32 posX, i32 posY, i32 fontSize, Color color) void;
+extern DrawTextEx(Font font, str text, Vector2 position, f32 fontSize, f32 spacing, Color tint) void;
+extern DrawTextPro(Font font, str text, Vector2 position, Vector2 origin, f32 rotation, f32 fontSize, f32 spacing, Color tint) void;
+extern SetTextLineSpacing(i32 spacing) void;
+extern MeasureText(str text, i32 fontSize) i32;
+extern MeasureTextEx(Font font, str text, f32 fontSize, f32 spacing) Vector2;
+
+// ============================================================
+// rmodels, 3D basic shapes
+// ============================================================
+
+extern DrawLine3D(Vector3 startPos, Vector3 endPos, Color color) void;
+extern DrawPoint3D(Vector3 position, Color color) void;
+extern DrawCircle3D(Vector3 center, f32 radius, Vector3 rotationAxis, f32 rotationAngle, Color color) void;
+extern DrawTriangle3D(Vector3 v1, Vector3 v2, Vector3 v3, Color color) void;
+extern DrawCube(Vector3 position, f32 width, f32 height, f32 length, Color color) void;
+extern DrawCubeV(Vector3 position, Vector3 size, Color color) void;
+extern DrawCubeWires(Vector3 position, f32 width, f32 height, f32 length, Color color) void;
+extern DrawCubeWiresV(Vector3 position, Vector3 size, Color color) void;
+extern DrawSphere(Vector3 centerPos, f32 radius, Color color) void;
+extern DrawSphereEx(Vector3 centerPos, f32 radius, i32 rings, i32 slices, Color color) void;
+extern DrawSphereWires(Vector3 centerPos, f32 radius, i32 rings, i32 slices, Color color) void;
+extern DrawCylinder(Vector3 position, f32 radiusTop, f32 radiusBottom, f32 height, i32 slices, Color color) void;
+extern DrawCylinderEx(Vector3 startPos, Vector3 endPos, f32 startRadius, f32 endRadius, i32 sides, Color color) void;
+extern DrawCylinderWires(Vector3 position, f32 radiusTop, f32 radiusBottom, f32 height, i32 slices, Color color) void;
+extern DrawCapsule(Vector3 startPos, Vector3 endPos, f32 radius, i32 slices, i32 rings, Color color) void;
+extern DrawCapsuleWires(Vector3 startPos, Vector3 endPos, f32 radius, i32 slices, i32 rings, Color color) void;
+extern DrawPlane(Vector3 centerPos, Vector2 size, Color color) void;
+extern DrawRay(Ray ray, Color color) void;
+extern DrawGrid(i32 slices, f32 spacing) void;
+extern DrawBoundingBox(BoundingBox box, Color color) void;
+
+extern CheckCollisionSpheres(Vector3 center1, f32 radius1, Vector3 center2, f32 radius2) bool;
+extern CheckCollisionBoxes(BoundingBox box1, BoundingBox box2) bool;
+extern CheckCollisionBoxSphere(BoundingBox box, Vector3 center, f32 radius) bool;
+
+extern GetScreenToWorldRay(Vector2 position, Camera3D camera) Ray;
+extern GetWorldToScreen(Vector3 position, Camera3D camera) Vector2;
+extern GetWorldToScreen2D(Vector2 position, Camera2D camera) Vector2;
+extern GetScreenToWorld2D(Vector2 position, Camera2D camera) Vector2;
+
+// ============================================================
+// raudio, Device
+// ============================================================
+
+extern InitAudioDevice() void;
+extern CloseAudioDevice() void;
+extern IsAudioDeviceReady() bool;
+extern SetMasterVolume(f32 volume) void;
+extern GetMasterVolume() f32;
+
+// ============================================================
+// raudio, Wave
+// ============================================================
+
+extern LoadWave(str fileName) Wave;
+extern IsWaveValid(Wave wave) bool;
+extern UnloadWave(Wave wave) void;
+extern ExportWave(Wave wave, str fileName) bool;
+extern WaveCopy(Wave wave) Wave;
+extern WaveCrop(Wave* wave, i32 initFrame, i32 finalFrame) void;
+extern WaveFormat(Wave* wave, i32 sampleRate, i32 sampleSize, i32 channels) void;
+
+// ============================================================
+// raudio, Sound
+// ============================================================
+
+extern LoadSound(str fileName) Sound;
+extern LoadSoundFromWave(Wave wave) Sound;
+extern IsSoundValid(Sound sound) bool;
+extern UnloadSound(Sound sound) void;
+extern UpdateSound(Sound sound, void* data, i32 sampleCount) void;
+extern PlaySound(Sound sound) void;
+extern StopSound(Sound sound) void;
+extern PauseSound(Sound sound) void;
+extern ResumeSound(Sound sound) void;
+extern IsSoundPlaying(Sound sound) bool;
+extern SetSoundVolume(Sound sound, f32 volume) void;
+extern SetSoundPitch(Sound sound, f32 pitch) void;
+extern SetSoundPan(Sound sound, f32 pan) void;
+
+// ============================================================
+// raudio, Music (streaming)
+// ============================================================
+
+extern LoadMusicStream(str fileName) Music;
+extern IsMusicValid(Music music) bool;
+extern UnloadMusicStream(Music music) void;
+extern PlayMusicStream(Music music) void;
+extern IsMusicStreamPlaying(Music music) bool;
+extern UpdateMusicStream(Music music) void;
+extern StopMusicStream(Music music) void;
+extern PauseMusicStream(Music music) void;
+extern ResumeMusicStream(Music music) void;
+extern SeekMusicStream(Music music, f32 position) void;
+extern SetMusicVolume(Music music, f32 volume) void;
+extern SetMusicPitch(Music music, f32 pitch) void;
+extern SetMusicPan(Music music, f32 pan) void;
+extern GetMusicTimeLength(Music music) f32;
+extern GetMusicTimePlayed(Music music) f32;
+
+// ============================================================
+// Color helpers
+// ============================================================
+
+MakeColor(u8 r, u8 g, u8 b, u8 a) Color {
+    Color c;
+    c.r = r;
+    c.g = g;
+    c.b = b;
+    c.a = a;
+    return c;
+}
+
+Color LIGHTGRAY  = MakeColor(200, 200, 200, 255);
+Color GRAY       = MakeColor(130, 130, 130, 255);
+Color DARKGRAY   = MakeColor(80,  80,  80,  255);
+Color YELLOW     = MakeColor(253, 249, 0,   255);
+Color GOLD       = MakeColor(255, 203, 0,   255);
+Color ORANGE     = MakeColor(255, 161, 0,   255);
+Color PINK       = MakeColor(255, 109, 194, 255);
+Color RED        = MakeColor(230, 41,  55,  255);
+Color MAROON     = MakeColor(190, 33,  55,  255);
+Color GREEN      = MakeColor(0,   228, 48,  255);
+Color LIME       = MakeColor(0,   158, 47,  255);
+Color DARKGREEN  = MakeColor(0,   117, 44,  255);
+Color SKYBLUE    = MakeColor(102, 191, 255, 255);
+Color BLUE       = MakeColor(0,   121, 241, 255);
+Color DARKBLUE   = MakeColor(0,   82,  172, 255);
+Color PURPLE     = MakeColor(200, 122, 255, 255);
+Color VIOLET     = MakeColor(135, 60,  190, 255);
+Color DARKPURPLE = MakeColor(112, 31,  126, 255);
+Color BEIGE      = MakeColor(211, 176, 131, 255);
+Color BROWN      = MakeColor(127, 106, 79,  255);
+Color DARKBROWN  = MakeColor(76,  63,  47,  255);
+Color WHITE      = MakeColor(255, 255, 255, 255);
+Color BLACK      = MakeColor(0,   0,   0,   255);
+Color BLANK      = MakeColor(0,   0,   0,   0);
+Color MAGENTA    = MakeColor(255, 0,   255, 255);
+Color RAYWHITE   = MakeColor(245, 245, 245, 255);
+
+// ============================================================
+// Constants (use as i32 literals)
+// ============================================================
+//
+// --- Keys ---
+// KEY_NULL=0  KEY_SPACE=32  KEY_APOSTROPHE=39  KEY_COMMA=44
+// KEY_MINUS=45  KEY_PERIOD=46  KEY_SLASH=47
+// KEY_ZERO=48 .. KEY_NINE=57   KEY_SEMICOLON=59  KEY_EQUAL=61
+// KEY_A=65 .. KEY_Z=90
+// KEY_LEFT_BRACKET=91  KEY_BACKSLASH=92  KEY_RIGHT_BRACKET=93  KEY_GRAVE=96
+// KEY_ESCAPE=256  KEY_ENTER=257  KEY_TAB=258  KEY_BACKSPACE=259
+// KEY_INSERT=260  KEY_DELETE=261
+// KEY_RIGHT=262  KEY_LEFT=263  KEY_DOWN=264  KEY_UP=265
+// KEY_PAGE_UP=266  KEY_PAGE_DOWN=267  KEY_HOME=268  KEY_END=269
+// KEY_CAPS_LOCK=280  KEY_SCROLL_LOCK=281  KEY_NUM_LOCK=282  KEY_PRINT_SCREEN=283
+// KEY_F1=290 .. KEY_F12=301
+// KEY_KP_0=320 .. KEY_KP_9=329  KEY_KP_DECIMAL=330
+// KEY_KP_DIVIDE=331  KEY_KP_MULTIPLY=332  KEY_KP_SUBTRACT=333
+// KEY_KP_ADD=334  KEY_KP_ENTER=335  KEY_KP_EQUAL=336
+// KEY_LEFT_SHIFT=340  KEY_LEFT_CONTROL=341  KEY_LEFT_ALT=342
+// KEY_LEFT_SUPER=343  KEY_RIGHT_SHIFT=344  KEY_RIGHT_CONTROL=345
+// KEY_RIGHT_ALT=346  KEY_RIGHT_SUPER=347  KEY_MENU=348
+//
+// --- Mouse buttons ---
+// MOUSE_BUTTON_LEFT=0  MOUSE_BUTTON_RIGHT=1  MOUSE_BUTTON_MIDDLE=2
+// MOUSE_BUTTON_SIDE=3  MOUSE_BUTTON_EXTRA=4
+// MOUSE_BUTTON_FORWARD=5  MOUSE_BUTTON_BACK=6
+//
+// --- Mouse cursors ---
+// MOUSE_CURSOR_DEFAULT=0  MOUSE_CURSOR_ARROW=1  MOUSE_CURSOR_IBEAM=2
+// MOUSE_CURSOR_CROSSHAIR=3  MOUSE_CURSOR_POINTING_HAND=4
+// MOUSE_CURSOR_RESIZE_EW=5  MOUSE_CURSOR_RESIZE_NS=6
+// MOUSE_CURSOR_RESIZE_NWSE=7  MOUSE_CURSOR_RESIZE_NESW=8
+// MOUSE_CURSOR_RESIZE_ALL=9  MOUSE_CURSOR_NOT_ALLOWED=10
+//
+// --- Gamepad buttons ---
+// GAMEPAD_BUTTON_UNKNOWN=0
+// GAMEPAD_BUTTON_LEFT_FACE_UP=1  DOWN=2  LEFT=3  RIGHT=4
+// GAMEPAD_BUTTON_RIGHT_FACE_UP=5  DOWN=6  LEFT=7  RIGHT=8
+// GAMEPAD_BUTTON_LEFT_TRIGGER_1=9  LEFT_TRIGGER_2=10
+// GAMEPAD_BUTTON_RIGHT_TRIGGER_1=11  RIGHT_TRIGGER_2=12
+// GAMEPAD_BUTTON_MIDDLE_LEFT=13  MIDDLE=14  MIDDLE_RIGHT=15
+// GAMEPAD_BUTTON_LEFT_THUMB=16  RIGHT_THUMB=17
+//
+// --- Gamepad axes ---
+// GAMEPAD_AXIS_LEFT_X=0  GAMEPAD_AXIS_LEFT_Y=1
+// GAMEPAD_AXIS_RIGHT_X=2  GAMEPAD_AXIS_RIGHT_Y=3
+// GAMEPAD_AXIS_LEFT_TRIGGER=4  GAMEPAD_AXIS_RIGHT_TRIGGER=5
+//
+// --- Camera modes ---
+// CAMERA_CUSTOM=0  CAMERA_FREE=1  CAMERA_ORBITAL=2
+// CAMERA_FIRST_PERSON=3  CAMERA_THIRD_PERSON=4
+//
+// --- Camera projection ---
+// CAMERA_PERSPECTIVE=0  CAMERA_ORTHOGRAPHIC=1
+//
+// --- Texture filters ---
+// TEXTURE_FILTER_POINT=0  TEXTURE_FILTER_BILINEAR=1  TEXTURE_FILTER_TRILINEAR=2
+// TEXTURE_FILTER_ANISOTROPIC_4X=3  TEXTURE_FILTER_ANISOTROPIC_8X=4
+// TEXTURE_FILTER_ANISOTROPIC_16X=5
+//
+// --- Texture wrap ---
+// TEXTURE_WRAP_REPEAT=0  TEXTURE_WRAP_CLAMP=1
+// TEXTURE_WRAP_MIRROR_REPEAT=2  TEXTURE_WRAP_MIRROR_CLAMP=3
+//
+// --- Pixel formats ---
+// PIXELFORMAT_UNCOMPRESSED_GRAYSCALE=1  PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA=2
+// PIXELFORMAT_UNCOMPRESSED_R5G6B5=3     PIXELFORMAT_UNCOMPRESSED_R8G8B8=4
+// PIXELFORMAT_UNCOMPRESSED_R5G5B5A1=5   PIXELFORMAT_UNCOMPRESSED_R4G4B4A4=6
+// PIXELFORMAT_UNCOMPRESSED_R8G8B8A8=7   PIXELFORMAT_UNCOMPRESSED_R32=8
+// PIXELFORMAT_UNCOMPRESSED_R32G32B32=9  PIXELFORMAT_UNCOMPRESSED_R32G32B32A32=10
+//
+// --- Config flags (OR them together for SetConfigFlags) ---
+// FLAG_VSYNC_HINT=64        FLAG_FULLSCREEN_MODE=2     FLAG_WINDOW_RESIZABLE=4
+// FLAG_WINDOW_UNDECORATED=8 FLAG_WINDOW_HIDDEN=128     FLAG_WINDOW_MINIMIZED=512
+// FLAG_WINDOW_MAXIMIZED=1024 FLAG_WINDOW_UNFOCUSED=2048 FLAG_WINDOW_TOPMOST=4096
+// FLAG_WINDOW_ALWAYS_RUN=256 FLAG_WINDOW_TRANSPARENT=16 FLAG_WINDOW_HIGHDPI=8192
+// FLAG_MSAA_4X_HINT=32
+//
+// --- Log levels ---
+// LOG_ALL=0  LOG_TRACE=1  LOG_DEBUG=2  LOG_INFO=3
+// LOG_WARNING=4  LOG_ERROR=5  LOG_FATAL=6  LOG_NONE=7
+//
+// --- NPatch layout ---
+// NPATCH_NINE_PATCH=0  NPATCH_THREE_PATCH_VERTICAL=1  NPATCH_THREE_PATCH_HORIZONTAL=2
+
+/*
+ * RAYLIB KEY OFFICIAL CODE
+ * 
+ * // Add backwards compatibility support for deprecated names
+ * #define MOUSE_LEFT_BUTTON   MOUSE_BUTTON_LEFT
+ * #define MOUSE_RIGHT_BUTTON  MOUSE_BUTTON_RIGHT
+ * #define MOUSE_MIDDLE_BUTTON MOUSE_BUTTON_MIDDLE
+ * 
+ * // Mouse buttons
+ * typedef enum {
+ *    MOUSE_BUTTON_LEFT    = 0,       // Mouse button left
+ *    MOUSE_BUTTON_RIGHT   = 1,       // Mouse button right
+ *    MOUSE_BUTTON_MIDDLE  = 2,       // Mouse button middle (pressed wheel)
+ *    MOUSE_BUTTON_SIDE    = 3,       // Mouse button side (advanced mouse device)
+ *    MOUSE_BUTTON_EXTRA   = 4,       // Mouse button extra (advanced mouse device)
+ *    MOUSE_BUTTON_FORWARD = 5,       // Mouse button forward (advanced mouse device)
+ *    MOUSE_BUTTON_BACK    = 6,       // Mouse button back (advanced mouse device)
+ * } MouseButton;
+ * 
+ * // Mouse cursor
+ * typedef enum {
+ *    MOUSE_CURSOR_DEFAULT       = 0,     // Default pointer shape
+ *    MOUSE_CURSOR_ARROW         = 1,     // Arrow shape
+ *    MOUSE_CURSOR_IBEAM         = 2,     // Text writing cursor shape
+ *    MOUSE_CURSOR_CROSSHAIR     = 3,     // Cross shape
+ *    MOUSE_CURSOR_POINTING_HAND = 4,     // Pointing hand cursor
+ *    MOUSE_CURSOR_RESIZE_EW     = 5,     // Horizontal resize/move arrow shape
+ *    MOUSE_CURSOR_RESIZE_NS     = 6,     // Vertical resize/move arrow shape
+ *    MOUSE_CURSOR_RESIZE_NWSE   = 7,     // Top-left to bottom-right diagonal resize/move arrow shape
+ *    MOUSE_CURSOR_RESIZE_NESW   = 8,     // The top-right to bottom-left diagonal resize/move arrow shape
+ *    MOUSE_CURSOR_RESIZE_ALL    = 9,     // The omnidirectional resize/move cursor shape
+ *    MOUSE_CURSOR_NOT_ALLOWED   = 10     // The operation-not-allowed shape
+ * } MouseCursor;
+ * 
+ * typedef enum {
+ *    KEY_NULL            = 0,        // Key: NULL, used for no key pressed
+ *    // Alphanumeric keys
+ *    KEY_APOSTROPHE      = 39,       // Key: '
+ *    KEY_COMMA           = 44,       // Key: ,
+ *    KEY_MINUS           = 45,       // Key: -
+ *    KEY_PERIOD          = 46,       // Key: .
+ *    KEY_SLASH           = 47,       // Key: /
+ *    KEY_ZERO            = 48,       // Key: 0
+ *    KEY_ONE             = 49,       // Key: 1
+ *    KEY_TWO             = 50,       // Key: 2
+ *    KEY_THREE           = 51,       // Key: 3
+ *    KEY_FOUR            = 52,       // Key: 4
+ *    KEY_FIVE            = 53,       // Key: 5
+ *    KEY_SIX             = 54,       // Key: 6
+ *    KEY_SEVEN           = 55,       // Key: 7
+ *    KEY_EIGHT           = 56,       // Key: 8
+ *    KEY_NINE            = 57,       // Key: 9
+ *    KEY_SEMICOLON       = 59,       // Key: ;
+ *    KEY_EQUAL           = 61,       // Key: =
+ *    KEY_A               = 65,       // Key: A | a
+ *    KEY_B               = 66,       // Key: B | b
+ *    KEY_C               = 67,       // Key: C | c
+ *    KEY_D               = 68,       // Key: D | d
+ *    KEY_E               = 69,       // Key: E | e
+ *    KEY_F               = 70,       // Key: F | f
+ *    KEY_G               = 71,       // Key: G | g
+ *    KEY_H               = 72,       // Key: H | h
+ *    KEY_I               = 73,       // Key: I | i
+ *    KEY_J               = 74,       // Key: J | j
+ *    KEY_K               = 75,       // Key: K | k
+ *    KEY_L               = 76,       // Key: L | l
+ *    KEY_M               = 77,       // Key: M | m
+ *    KEY_N               = 78,       // Key: N | n
+ *    KEY_O               = 79,       // Key: O | o
+ *    KEY_P               = 80,       // Key: P | p
+ *    KEY_Q               = 81,       // Key: Q | q
+ *    KEY_R               = 82,       // Key: R | r
+ *    KEY_S               = 83,       // Key: S | s
+ *    KEY_T               = 84,       // Key: T | t
+ *    KEY_U               = 85,       // Key: U | u
+ *    KEY_V               = 86,       // Key: V | v
+ *    KEY_W               = 87,       // Key: W | w
+ *    KEY_X               = 88,       // Key: X | x
+ *    KEY_Y               = 89,       // Key: Y | y
+ *    KEY_Z               = 90,       // Key: Z | z
+ *    KEY_LEFT_BRACKET    = 91,       // Key: [
+ *    KEY_BACKSLASH       = 92,       // Key: '\'
+ *    KEY_RIGHT_BRACKET   = 93,       // Key: ]
+ *    KEY_GRAVE           = 96,       // Key: `
+ *    // Function keys
+ *    KEY_SPACE           = 32,       // Key: Space
+ *    KEY_ESCAPE          = 256,      // Key: Esc
+ *    KEY_ENTER           = 257,      // Key: Enter
+ *    KEY_TAB             = 258,      // Key: Tab
+ *    KEY_BACKSPACE       = 259,      // Key: Backspace
+ *    KEY_INSERT          = 260,      // Key: Ins
+ *    KEY_DELETE          = 261,      // Key: Del
+ *    KEY_RIGHT           = 262,      // Key: Cursor right
+ *    KEY_LEFT            = 263,      // Key: Cursor left
+ *    KEY_DOWN            = 264,      // Key: Cursor down
+ *    KEY_UP              = 265,      // Key: Cursor up
+ *    KEY_PAGE_UP         = 266,      // Key: Page up
+ *    KEY_PAGE_DOWN       = 267,      // Key: Page down
+ *    KEY_HOME            = 268,      // Key: Home
+ *    KEY_END             = 269,      // Key: End
+ *    KEY_CAPS_LOCK       = 280,      // Key: Caps lock
+ *    KEY_SCROLL_LOCK     = 281,      // Key: Scroll down
+ *    KEY_NUM_LOCK        = 282,      // Key: Num lock
+ *    KEY_PRINT_SCREEN    = 283,      // Key: Print screen
+ *    KEY_PAUSE           = 284,      // Key: Pause
+ *    KEY_F1              = 290,      // Key: F1
+ *    KEY_F2              = 291,      // Key: F2
+ *    KEY_F3              = 292,      // Key: F3
+ *    KEY_F4              = 293,      // Key: F4
+ *    KEY_F5              = 294,      // Key: F5
+ *    KEY_F6              = 295,      // Key: F6
+ *    KEY_F7              = 296,      // Key: F7
+ *    KEY_F8              = 297,      // Key: F8
+ *    KEY_F9              = 298,      // Key: F9
+ *    KEY_F10             = 299,      // Key: F10
+ *    KEY_F11             = 300,      // Key: F11
+ *    KEY_F12             = 301,      // Key: F12
+ *    KEY_LEFT_SHIFT      = 340,      // Key: Shift left
+ *    KEY_LEFT_CONTROL    = 341,      // Key: Control left
+ *    KEY_LEFT_ALT        = 342,      // Key: Alt left
+ *    KEY_LEFT_SUPER      = 343,      // Key: Super left
+ *    KEY_RIGHT_SHIFT     = 344,      // Key: Shift right
+ *    KEY_RIGHT_CONTROL   = 345,      // Key: Control right
+ *    KEY_RIGHT_ALT       = 346,      // Key: Alt right
+ *    KEY_RIGHT_SUPER     = 347,      // Key: Super right
+ *    KEY_KB_MENU         = 348,      // Key: KB menu
+ *    // Keypad keys
+ *    KEY_KP_0            = 320,      // Key: Keypad 0
+ *    KEY_KP_1            = 321,      // Key: Keypad 1
+ *    KEY_KP_2            = 322,      // Key: Keypad 2
+ *    KEY_KP_3            = 323,      // Key: Keypad 3
+ *    KEY_KP_4            = 324,      // Key: Keypad 4
+ *    KEY_KP_5            = 325,      // Key: Keypad 5
+ *    KEY_KP_6            = 326,      // Key: Keypad 6
+ *    KEY_KP_7            = 327,      // Key: Keypad 7
+ *    KEY_KP_8            = 328,      // Key: Keypad 8
+ *    KEY_KP_9            = 329,      // Key: Keypad 9
+ *    KEY_KP_DECIMAL      = 330,      // Key: Keypad .
+ *    KEY_KP_DIVIDE       = 331,      // Key: Keypad /
+ *    KEY_KP_MULTIPLY     = 332,      // Key: Keypad *
+ *    KEY_KP_SUBTRACT     = 333,      // Key: Keypad -
+ *    KEY_KP_ADD          = 334,      // Key: Keypad +
+ *    KEY_KP_ENTER        = 335,      // Key: Keypad Enter
+ *    KEY_KP_EQUAL        = 336,      // Key: Keypad =
+ *    // Android key buttons
+ *    KEY_BACK            = 4,        // Key: Android back button
+ *    KEY_MENU            = 5,        // Key: Android menu button
+ *    KEY_VOLUME_UP       = 24,       // Key: Android volume up button
+ *    KEY_VOLUME_DOWN     = 25        // Key: Android volume down button
+ * } KeyboardKey;
+ */
+
+// ============================================================
+// rlgl / Shader support
+// ============================================================
+
+struct Shader {
+    u32   id;      // OpenGL shader program id
+    void* locs;    // Shader locations array (i32* really, but void* is safe)
+}
+
+extern LoadShader(str vsFileName, str fsFileName) Shader;
+extern LoadShaderFromMemory(str vsCode, str fsCode) Shader;
+extern IsShaderValid(Shader shader) bool;
+extern UnloadShader(Shader shader) void;
+extern GetShaderLocation(Shader shader, str uniformName) i32;
+extern GetShaderLocationAttrib(Shader shader, str attribName) i32;
+extern SetShaderValue(Shader shader, i32 locIndex, void* value, i32 uniformType) void;
+extern SetShaderValueV(Shader shader, i32 locIndex, void* value, i32 uniformType, i32 count) void;
+extern SetShaderValueMatrix(Shader shader, i32 locIndex, void* mat) void;
+extern SetShaderValueTexture(Shader shader, i32 locIndex, Texture texture) void;
+extern BeginShaderMode(Shader shader) void;
+extern EndShaderMode() void;
+
+// ShaderUniformDataType constants (pass as i32):
+// SHADER_UNIFORM_FLOAT     = 0
+// SHADER_UNIFORM_VEC2      = 1
+// SHADER_UNIFORM_VEC3      = 2
+// SHADER_UNIFORM_VEC4      = 3
+// SHADER_UNIFORM_INT       = 4
+// SHADER_UNIFORM_IVEC2     = 5
+// SHADER_UNIFORM_IVEC3     = 6
+// SHADER_UNIFORM_IVEC4     = 7
+// SHADER_UNIFORM_SAMPLER2D = 8
+
+// ShaderLocationIndex constants (for locs array indexing):
+// SHADER_LOC_VERTEX_POSITION   = 0
+// SHADER_LOC_VERTEX_TEXCOORD01 = 1
+// SHADER_LOC_VERTEX_TEXCOORD02 = 2
+// SHADER_LOC_VERTEX_NORMAL     = 3
+// SHADER_LOC_VERTEX_TANGENT    = 4
+// SHADER_LOC_VERTEX_COLOR      = 5
+// SHADER_LOC_MATRIX_MVP        = 6
+// SHADER_LOC_MATRIX_VIEW       = 7
+// SHADER_LOC_MATRIX_PROJECTION = 8
+// SHADER_LOC_MATRIX_MODEL      = 9
+// SHADER_LOC_MATRIX_NORMAL     = 10
+// SHADER_LOC_VECTOR_VIEW       = 11
+// SHADER_LOC_COLOR_DIFFUSE     = 12
+// SHADER_LOC_COLOR_SPECULAR    = 13
+// SHADER_LOC_COLOR_AMBIENT     = 14
+// SHADER_LOC_MAP_ALBEDO        = 15
+// SHADER_LOC_MAP_METALNESS     = 16
+// SHADER_LOC_MAP_NORMAL        = 17
+// SHADER_LOC_MAP_ROUGHNESS     = 18
+// SHADER_LOC_MAP_OCCLUSION     = 19
+// SHADER_LOC_MAP_EMISSION      = 20
+// SHADER_LOC_MAP_HEIGHT        = 21
+// SHADER_LOC_MAP_CUBEMAP       = 22
+// SHADER_LOC_MAP_IRRADIANCE    = 23
+// SHADER_LOC_MAP_PREFILTER     = 24
+// SHADER_LOC_MAP_BRDF          = 25
