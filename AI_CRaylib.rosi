@@ -1,5 +1,4 @@
-// raylib.lc
-// Complete Raylib bindings for Lucile (Will be later auto generated instead or rewritten)
+// Complete Raylib bindings for Rosaline (formerly Lucile)
 // Compile & link with: -lraylib -lm -ldl -lpthread (Linux)
 //                      -lraylib -framework... (macOS)
 //                      raylib.lib (Windows)
@@ -112,6 +111,12 @@ struct AudioStream {
     u32   channels;
 }
 
+struct FilePathList {
+    u32  capacity;
+    u32  count;
+    str* paths;
+}
+
 struct Wave {
     u32   frameCount;
     u32   sampleRate;
@@ -175,9 +180,9 @@ extern GetMonitorHeight(i32 monitor) i32;
 extern GetMonitorRefreshRate(i32 monitor) i32;
 extern GetWindowPosition() Vector2;
 extern GetWindowScaleDPI() Vector2;
-extern GetMonitorName(i32 monitor) str;
+unsafe extern GetMonitorName(i32 monitor) str;
 extern SetClipboardText(str text) void;
-extern GetClipboardText() str;
+unsafe extern GetClipboardText() str;
 extern EnableEventWaiting() void;
 extern DisableEventWaiting() void;
 
@@ -238,18 +243,75 @@ extern GetRandomValue(i32 min, i32 max) i32;
 // rcore, File system helpers
 // ============================================================
 
+unsafe extern LoadFileData(str fileName, i32* dataSize) u8*;
+unsafe extern UnloadFileData(u8* data) void;
+extern SaveFileData(str fileName, void* data, i32 dataSize) bool;
+extern ExportDataAsCode(u8* data, i32 dataSize, str fileName) bool;
+unsafe extern LoadFileText(str fileName) str;
+unsafe extern UnloadFileText(str text) void;
+extern SaveFileText(str fileName, str text) bool;
+
+extern FileRename(str fileName, str fileRename) i32;
+extern FileRemove(str fileName) i32;
+extern FileCopy(str srcPath, str dstPath) i32;
+extern FileMove(str srcPath, str dstPath) i32;
+extern FileTextReplace(str fileName, str search, str replacement) i32;
+extern FileTextFindIndex(str fileName, str search) i32;
 extern FileExists(str fileName) bool;
 extern DirectoryExists(str dirPath) bool;
 extern IsFileExtension(str fileName, str ext) bool;
 extern GetFileLength(str fileName) i32;
-extern GetFileExtension(str fileName) str;
-extern GetFileName(str filePath) str;
-extern GetFileNameWithoutExt(str filePath) str;
-extern GetDirectoryPath(str filePath) str;
-extern GetWorkingDirectory() str;
-extern GetApplicationDirectory() str;
-extern ChangeDirectory(str dir) bool;
+extern GetFileModTime(str fileName) i64;
+unsafe extern GetFileExtension(str fileName) str;
+unsafe extern GetFileName(str filePath) str;
+unsafe extern GetFileNameWithoutExt(str filePath) str;
+unsafe extern GetDirectoryPath(str filePath) str;
+unsafe extern GetPrevDirectoryPath(str dirPath) str;
+unsafe extern GetWorkingDirectory() str;
+unsafe extern GetApplicationDirectory() str;
+extern MakeDirectory(str dirPath) i32;
+extern ChangeDirectory(str dirPath) bool;
 extern IsPathFile(str path) bool;
+extern IsFileNameValid(str fileName) bool;
+extern LoadDirectoryFiles(str dirPath) FilePathList;
+extern LoadDirectoryFilesEx(str basePath, str filter, bool scanSubdirs) FilePathList;
+extern UnloadDirectoryFiles(FilePathList files) void;
+extern IsFileDropped() bool;
+extern LoadDroppedFiles() FilePathList;
+extern UnloadDroppedFiles(FilePathList files) void;
+extern GetDirectoryFileCount(str dirPath) u32;
+extern GetDirectoryFileCountEx(str basePath, str filter, bool scanSubdirs) u32;
+
+// ============================================================
+// rcore, Text management
+// ============================================================
+
+unsafe extern LoadTextLines(str text, i32* count) str*;
+unsafe extern UnloadTextLines(str* text, i32 lineCount) void;
+extern TextCopy(str dst, str src) i32;
+extern TextIsEqual(str text1, str text2) bool;
+extern TextLength(str text) u32;
+unsafe extern TextFormat(str text, ) str;
+unsafe extern TextSubtext(str text, i32 position, i32 length) str;
+unsafe extern TextRemoveSpaces(str text) str;
+unsafe extern GetTextBetween(str text, str begin, str end) str;
+unsafe extern TextReplace(str text, str search, str replacement) str;
+extern TextReplaceAlloc(str text, str search, str replacement) str;
+unsafe extern TextReplaceBetween(str text, str begin, str end, str replacement) str;
+extern TextReplaceBetweenAlloc(str text, str begin, str end, str replacement) str;
+unsafe extern TextInsert(str text, str insert, i32 position) str;
+extern TextInsertAlloc(str text, str insert, i32 position) str;
+unsafe extern TextJoin(str* textList, i32 count, str delimiter) str;
+unsafe extern TextSplit(str text, char delimiter, i32* count) str*;
+extern TextAppend(str text, str append, i32* position) void;
+extern TextFindIndex(str text, str search) i32;
+unsafe extern TextToUpper(str text) str;
+unsafe extern TextToLower(str text) str;
+unsafe extern TextToPascal(str text) str;
+unsafe extern TextToSnake(str text) str;
+unsafe extern TextToCamel(str text) str;
+extern TextToInteger(str text) i32;
+extern TextToFloat(str text) f32;
 
 // ============================================================
 // rcore, Camera
@@ -305,7 +367,7 @@ extern GetTouchPointCount() i32;
 // ============================================================
 
 extern IsGamepadAvailable(i32 gamepad) bool;
-extern GetGamepadName(i32 gamepad) str;
+unsafe extern GetGamepadName(i32 gamepad) str;
 extern IsGamepadButtonPressed(i32 gamepad, i32 button) bool;
 extern IsGamepadButtonDown(i32 gamepad, i32 button) bool;
 extern IsGamepadButtonReleased(i32 gamepad, i32 button) bool;
@@ -686,12 +748,12 @@ Color RAYWHITE   = MakeColor(245, 245, 245, 255);
 
 /*
  * RAYLIB KEY OFFICIAL CODE
- * 
+ *
  * // Add backwards compatibility support for deprecated names
  * #define MOUSE_LEFT_BUTTON   MOUSE_BUTTON_LEFT
  * #define MOUSE_RIGHT_BUTTON  MOUSE_BUTTON_RIGHT
  * #define MOUSE_MIDDLE_BUTTON MOUSE_BUTTON_MIDDLE
- * 
+ *
  * // Mouse buttons
  * typedef enum {
  *    MOUSE_BUTTON_LEFT    = 0,       // Mouse button left
@@ -702,7 +764,7 @@ Color RAYWHITE   = MakeColor(245, 245, 245, 255);
  *    MOUSE_BUTTON_FORWARD = 5,       // Mouse button forward (advanced mouse device)
  *    MOUSE_BUTTON_BACK    = 6,       // Mouse button back (advanced mouse device)
  * } MouseButton;
- * 
+ *
  * // Mouse cursor
  * typedef enum {
  *    MOUSE_CURSOR_DEFAULT       = 0,     // Default pointer shape
@@ -717,7 +779,7 @@ Color RAYWHITE   = MakeColor(245, 245, 245, 255);
  *    MOUSE_CURSOR_RESIZE_ALL    = 9,     // The omnidirectional resize/move cursor shape
  *    MOUSE_CURSOR_NOT_ALLOWED   = 10     // The operation-not-allowed shape
  * } MouseCursor;
- * 
+ *
  * typedef enum {
  *    KEY_NULL            = 0,        // Key: NULL, used for no key pressed
  *    // Alphanumeric keys
